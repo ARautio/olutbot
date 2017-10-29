@@ -1,0 +1,21 @@
+{
+  "name": "olutbot",
+  "version": "0.1.0",
+  "description": "OlutBot is a telegram bot to search and share beers from Untappd and Alko",
+  "main": "index.js",
+  "scripts": {
+    "start": "functions start",
+    "stop": "functions stop",
+    "deploy": "node scripts/deploy.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aki Rautio",
+  "license": "MIT",
+  "dependencies": {
+    "cloud-functions-runtime-config": "^0.1.1",
+    "request-promise-native": "^1.0.5"
+  },
+  "devDependencies": {
+    "@google-cloud/functions-emulator": "^1.0.0-alpha.25"
+  }
+}
