@@ -12,6 +12,7 @@
   "author": "Aki Rautio",
   "license": "MIT",
   "dependencies": {
+    "@google-cloud/datastore": "^1.1.0",
     "cheerio": "^1.0.0-rc.2",
     "cloud-functions-runtime-config": "^0.1.1",
     "request": "^2.83.0",
@@ -20,6 +21,9 @@
     "xlsx": "^0.11.7"
   },
   "devDependencies": {
-    "@google-cloud/functions-emulator": "^1.0.0-alpha.25"
+    "@google-cloud/functions-emulator": "^1.0.0-alpha.25",
+    "eslint": "^4.10.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0"
   }
 }

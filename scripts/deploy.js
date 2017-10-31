@@ -14,8 +14,12 @@ gcloud beta runtime-config configs variables \
 
 /*gcloud beta functions deploy olutbot \
   --trigger-http \
-  --entry-point echoBot \
-  --stage-bucket unique-bucket-name */
+  --entry-point olutbot \
+  --stage-bucket olutbot */
+
+/*gcloud beta functions deploy fetchAlko \
+    --trigger-topic fetchAlko \
+    --stage-bucket olutbot */
 
 
 // TODO: Set webhook

@@ -1,34 +1,63 @@
 const rp = require('request-promise');
-var cheerio = require('cheerio');
+const cheerio = require('cheerio');
+const XLSX = require('xlsx');
+const request = require('request');
+const Datastore = require('@google-cloud/datastore');
+const config = require('../config.js');
 
 
 // TODO: Make script to fetch alkos productbase daily
 // and update the beerlist to database
-exports.fetchAlko = function (event){
+exports.fetchAlko = function fetchAlko(event) {
   // Parse xls file from here: https://www.alko.fi/valikoimat-ja-hinnasto/hinnasto
-  return rp('https://www.alko.fi/valikoimat-ja-hinnasto/hinnasto').then(function(process,handleError){
-    var $ = cheerio.load(process);
-    var url = null;
-    $('a').each(function() {
-      var text = $(this).text();
-      var link = $(this).attr('href');
-      if(text && text.match('Alkon hinnasto')){
-        console.log(text + ' --> ' + link);
-        url = 'https://www.alko.fi' + link;
-      };
+  return rp('https://www.alko.fi/valikoimat-ja-hinnasto/hinnasto').then((process,handleError) => {
+    const $ = cheerio.load(process);
+    let url = null;
+    $('a').each(function content() {
+      const text = $(this).text();
+      const link = $(this).attr('href');
+      if (text && text.match('Alkon hinnasto')) {
+        console.log(`${text} --> ${link}`);
+        url = `https://www.alko.fi${link}`;
+      }
     });
     // Downloadfile
-    const XLSX = require('xlsx'), request = require('request');
-    request(url, {encoding: null}, function(err, res, data) {
-      if(err || res.statusCode !== 200) return;
-
+    console.log('Downloading', url);
+    request(url, { encoding: null }, (err, res, data) => {
+      if (err || res.statusCode !== 200) return;
       // data is a node Buffer that can be passed to XLSX.read
-      var workbook = XLSX.read(data, {type:'buffer'});
-      var worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      // TODO: Read rows and add them to database
-      // TODO: For Loop each row and check if category is beer
-      // TODO: Then update database with name (if name not found create a new one)
-      // TODO: https://cloud.google.com/datastore/docs/quickstart
+      const workbook = XLSX.read(data, { type: 'buffer' });
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+
+      const datastore = Datastore({
+        projectId: config.project_id,
+      });
+
+      let row = 4;
+      const beers = [];
+      while (worksheet[`A${row}`] !== undefined) {
+        if (worksheet[`I${row}`] !== undefined && worksheet[`I${row}`].v === 'oluet') {
+          const taskKey = datastore.key(['Beer', worksheet[`A${row}`].v]);
+          const beer = {
+            key: taskKey,
+            data: {
+              name: worksheet[`B${row}`].v,
+              brewery: worksheet[`C${row}`].v,
+              size: worksheet[`D${row}`].v,
+              id: worksheet[`A${row}`].v,
+              price: worksheet[`E${row}`].v,
+              updated: new Date().toJSON(),
+            },
+          };
+          beers.push(beer);
+        }
+        row += 1;
+      }
+      let batch = 0;
+      while (batch < beers.length / 500) {
+        datastore.save(beers.slice((batch * 500) + 1, (batch + 1) * 500));
+        batch += 1;
+      }
     });
   });
-}
+};
