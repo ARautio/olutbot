@@ -17,6 +17,10 @@ function getToken(){
   return Promise.resolve(config.telegramtoken)
 }
 
+function getBeer(beerName){
+  // TODO: Check if beer is found from alkos list and return information about it
+}
+
 /**
  * Search Olut functions.
  *
@@ -42,3 +46,6 @@ exports.olutbot = function olutbot(req, res) {
       res.status(500).send(err)
     })
 };
+
+const fetchAlko = require('./src/fetchAlko.js')
+exports.fetchAlko = fetchAlko.fetchAlko
