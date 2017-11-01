@@ -1,5 +1,5 @@
 'use strict';
-const config = require('../config.js')
+const config = require('../config.js');
 
 // TODO: Check that runtime-config is enabled and add telegram token from config.js
 

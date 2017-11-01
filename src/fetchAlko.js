@@ -2,7 +2,9 @@ const rp = require('request-promise');
 const cheerio = require('cheerio');
 const XLSX = require('xlsx');
 const request = require('request');
-const Datastore = require('@google-cloud/datastore');
+const algoliasearch = require('algoliasearch');
+// Instead of DataStore we use algoliasearch for this one
+// const Datastore = require('@google-cloud/datastore');
 const config = require('../config.js');
 
 
@@ -29,35 +31,37 @@ exports.fetchAlko = function fetchAlko(event) {
       const workbook = XLSX.read(data, { type: 'buffer' });
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
 
-      const datastore = Datastore({
+      let client = algoliasearch(config.algoliaAppID, config.algoliaIndex);
+      let index = client.initIndex('beers');
+
+      /*const datastore = Datastore({
         projectId: config.project_id,
-      });
+      });*/
 
       let row = 4;
       const beers = [];
       while (worksheet[`A${row}`] !== undefined) {
         if (worksheet[`I${row}`] !== undefined && worksheet[`I${row}`].v === 'oluet') {
-          const taskKey = datastore.key(['Beer', worksheet[`A${row}`].v]);
           const beer = {
-            key: taskKey,
-            data: {
-              name: worksheet[`B${row}`].v,
-              brewery: worksheet[`C${row}`].v,
-              size: worksheet[`D${row}`].v,
-              id: worksheet[`A${row}`].v,
-              price: worksheet[`E${row}`].v,
-              updated: new Date().toJSON(),
-            },
+            objectID: worksheet[`A${row}`].v,
+            name: worksheet[`B${row}`].v,
+            brewery: worksheet[`C${row}`].v,
+            size: worksheet[`D${row}`].v,
+            price: worksheet[`E${row}`].v,
+            updated: new Date().toJSON(),
           };
           beers.push(beer);
         }
         row += 1;
       }
-      let batch = 0;
+      /* let batch = 0;
       while (batch < beers.length / 500) {
         datastore.save(beers.slice((batch * 500) + 1, (batch + 1) * 500));
         batch += 1;
-      }
+      } */
+      index.saveObjects(beers, (error, content) => {
+        console.log(content);
+      });
     });
   });
 };
