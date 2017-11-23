@@ -41,7 +41,9 @@ exports.fetchAlko = function fetchAlko(event) {
       let row = 4;
       const beers = [];
       while (worksheet[`A${row}`] !== undefined) {
-        if (worksheet[`I${row}`] !== undefined && worksheet[`I${row}`].v === 'oluet') {
+        if (worksheet[`I${row}`] !== undefined &&
+            (worksheet[`I${row}`].v === 'oluet' ||
+            worksheet[`I${row}`].v === 'siiderit')) {
           const beer = {
             objectID: worksheet[`A${row}`].v,
             name: worksheet[`B${row}`].v,
