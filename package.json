@@ -18,12 +18,14 @@
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
     "request-promise-native": "^1.0.5",
-    "xlsx": "^0.11.7"
+    "xlsx": "^0.11.7",
+    "shelljs": "^0.7.8"
   },
   "devDependencies": {
     "@google-cloud/functions-emulator": "^1.0.0-alpha.25",
     "eslint": "^4.10.0",
     "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.8.0"
+    "eslint-plugin-import": "^2.8.0",
+    "jest": "^21.2.1"
   }
 }

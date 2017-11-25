@@ -13,13 +13,11 @@ I ended up selecting Algolia search for a backend to create an easy solution but
 
 ### Set up
 
+Create a google cloud profile and setup a cloud functions project with runtimeconfig enabled.
+
 Edit config.js and add Botname, Google project and bucket name and Telegram token, Algolia tokens.
 
-Deployment script doesn't work yet so you need to do following steps manually before that.
-
-1. Enable runtimeconfig and create config from telegram script.
-2. Deploy olutbot and fetchAlko functions to Google cloud functions.
-3. Set up telegram webhook to automatically get connections.
+Run npm deployment script which will create telegram config, deploy olutbot and fetchAlko functions and sets up a webhook to telegram.
 
 ### Testing
 
