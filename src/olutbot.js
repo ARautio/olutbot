@@ -1,12 +1,17 @@
 const request = require('request-promise-native');
 const config = require('../config.js');
 const runtimeConfig = require('cloud-functions-runtime-config');
-const { searchBeer, convertResult, convertInlineResult } = require('./searchBeer.js');
+const {
+  searchBeer, convertResult, convertInlineResult, checkRateBeer,
+} = require('./searchBeer.js');
 
 
 /**
  * getToken function
  *
+ * @param {object} message The input message from telegram which is defined in
+ * https://core.telegram.org/bots/api#message
+ * @param {function} response The callback function from Cloud functions.
  */
 function getToken() {
   if (process.env.NODE_ENV === 'production') {
@@ -15,8 +20,9 @@ function getToken() {
   return Promise.resolve(config.telegramtoken);
 }
 
+
 /**
- * getToken function
+ * respondToMessage function
  *
  * @param {object} message The input message from telegram which is defined in
  * https://core.telegram.org/bots/api#message
@@ -27,6 +33,7 @@ function respondToMessage(message, res) {
   const { message: { chat, text } } = message;
   const searchResult = searchBeer(text, 1);
   return Promise.all([searchResult, getTokenPromise])
+    .then(checkRateBeer)
     .then(resulttoken => request.post({
       uri: `https://api.telegram.org/bot${resulttoken[1]}/sendMessage`,
       json: true,

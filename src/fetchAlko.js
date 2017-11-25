@@ -31,12 +31,8 @@ exports.fetchAlko = function fetchAlko(event) {
       const workbook = XLSX.read(data, { type: 'buffer' });
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
 
-      let client = algoliasearch(config.algoliaAppID, config.algoliaIndex);
-      let index = client.initIndex('beers');
-
-      /*const datastore = Datastore({
-        projectId: config.project_id,
-      });*/
+      const client = algoliasearch(config.algoliaAppID, config.algoliaIndex);
+      const index = client.initIndex('beers');
 
       let row = 4;
       const beers = [];
@@ -56,11 +52,6 @@ exports.fetchAlko = function fetchAlko(event) {
         }
         row += 1;
       }
-      /* let batch = 0;
-      while (batch < beers.length / 500) {
-        datastore.save(beers.slice((batch * 500) + 1, (batch + 1) * 500));
-        batch += 1;
-      } */
       index.saveObjects(beers, (error, content) => {
         console.log(content);
       });

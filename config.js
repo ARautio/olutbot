@@ -4,9 +4,11 @@ function getConfigs() {
     botname: 'Olutbot',
     project_id: 'olutbot',
     bucket_name: 'olutbot',
-    telegramtoken: 'olutbot_token',
-    algoliaAppID: 'appid_token',
-    algoliaIndex: 'index_token',
+    telegramtoken: 'telegramtoken',
+    algoliaAppID: 'algoliaid',
+    algoliaIndex: 'algoliaindex',
+    ratebeer: true,
+    ratebeerAPIKey: 'ratebeerapikey',
   };
   return config;
 }
