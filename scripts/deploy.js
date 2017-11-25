@@ -1,32 +1,18 @@
-'use strict';
 const config = require('../config.js');
+const shell = require('shelljs');
+const { deployVariable, deployTopic, setWebhook } = require('./deployFunctions');
 
-// TODO: Check that runtime-config is enabled and add telegram token from config.js
-
-/* gcloud service-management enable runtimeconfig.googleapis.com */
-
-/*gcloud beta runtime-config configs create prod-config
-gcloud beta runtime-config configs variables \
-    set telegram/token  "TELEGRAM_TOKEN" \
-    --config-name prod-config */
-
-// TODO: Deploy Olutbot application
-
-/*gcloud beta functions deploy olutbot \
-  --trigger-http \
-  --entry-point olutbot \
-  --stage-bucket olutbot */
-
-/*gcloud beta functions deploy fetchAlko \
-    --trigger-topic fetchAlko \
-    --stage-bucket olutbot */
-
-
-// TODO: Set webhook
-
-/* curl -X POST \
-  -H "Content-Type: application/json" \
-  -d '{
-     "url": "https://<GCP_REGION>-<PROJECT_ID>.cloudfunctions.net/olutbot"
-   }' \
-   https://api.telegram.org/bot${TELEGRAM_TOKEN}/setWebhook */
+/* Check out that gcloud and curl are installed */
+if (!shell.which('gcloud')) {
+  shell.echo('Sorry, this script requires gcloud');
+  shell.exit(1);
+}
+if (!shell.which('curl')) {
+  shell.echo('Sorry, this script requires curl');
+  shell.exit(1);
+}
+/* Check variable, deploy http trigger and fetchAlko trigger and setup webhook to telegram */
+deployVariable(config.telegramtoken);
+deployTopic('http', 'olutbot', config.bucket_name);
+deployTopic('trigger', 'fetchAlko', config.bucket_name);
+setWebhook('olutbot', config.project_id, config.telegramtoken);
